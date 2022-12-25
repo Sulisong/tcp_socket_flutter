@@ -1,39 +1,78 @@
-<!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+TCP Socket Flutter
+===========
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/guides/libraries/writing-package-pages).
+* [Introduction](#introduction)
+* [Set up](#setup)
+* [License and contributors](#license-and-contributors)
 
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-library-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/developing-packages).
--->
+Introduction
+------------
 
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+This is a Flutter package that allows you to connect to a socket over the net. All data is then read using UTF-8.
 
-## Features
-
-TODO: List what your package can do. Maybe include images, gifs, or videos.
-
-## Getting started
-
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
-
-## Usage
-
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
-
-```dart
-const like = 'sample';
+Setup
+-------
+Config
+```Dart
+  TCPSocketSetUp.setConfig(
+    const SocketConfig(
+      port: 8000,
+      numberSplit: 10000,
+      timeoutEachTimesSendData: Duration(milliseconds: 50),
+    ),
+  );
+```
+Device Info
+```Dart
+await TCPSocketSetUp.init();
+```
+Server
+```Dart
+  final TCPSocketServer _server = TCPSocketServer();
+  final result = await _server.initServer(
+    onData: (ip, sourcePort, event) {
+        print('Server receive data from: $ip:$sourcePort');
+        print('Server receive data: $event');
+    },
+    onDone: (ip, sourcePort) {},
+    onError: (error, ip, sourcePort) {},
+  );
+  print(result);
+```
+Server send data
+```Dart
+  await _server.sendData(
+    FormDataSending(
+      type: 'Server send info',
+      data: getRandomString(1000000),
+    ),
+  );
+```
+Client
+```Dart
+  final TCPSocketClient _client = TCPSocketClient();
+  final result = await _client.connectToServer(
+    '192.168.0.101',
+    onData: (event) {
+      print('Client receive data: $event');
+    },
+    onDone: () {},
+    onError: (error) {},
+  );
+  print('Connect to server $result');
+```
+Client send data
+```Dart
+  await _client.sendData(
+    FormDataSending(
+      type: 'Client send info',
+      data: getRandomString(1000000),
+    ),
+  );
 ```
 
-## Additional information
+License and contributors
+------------------------
 
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
+* The MIT License, see [LICENSE](https://github.com/nghetien/tcp_socket_flutter/blob/main/LICENSE).
+* For contributors, see [AUTHORS](https://github.com/nghetien/tcp_socket_flutter/blob/main/AUTHORS).
