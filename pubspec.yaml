@@ -1,7 +1,7 @@
 name: tcp_socket_flutter
 description: A new Flutter package project.
 version: 0.0.1
-homepage:
+homepage: https://github.com/nghetien/tcp_socket_flutter
 
 environment:
   sdk: '>=2.18.5 <3.0.0'
