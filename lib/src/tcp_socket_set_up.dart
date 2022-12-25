@@ -19,7 +19,8 @@ class TCPSocketSetUp {
 
   static int get port => config.port;
 
-  static Duration get timeoutEachTimesSendData => config.timeoutEachTimesSendData;
+  static Duration get timeoutEachTimesSendData =>
+      config.timeoutEachTimesSendData;
 
   static int get numberSplit => config.numberSplit;
 

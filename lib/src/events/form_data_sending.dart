@@ -16,7 +16,8 @@ class FormDataSending extends Equatable {
         'data': data,
       };
 
-  factory FormDataSending.fromJson(Map<String, dynamic> json) => FormDataSending(
+  factory FormDataSending.fromJson(Map<String, dynamic> json) =>
+      FormDataSending(
         type: json['type'] as String,
         data: json['data'] as String,
       );

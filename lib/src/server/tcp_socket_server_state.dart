@@ -9,13 +9,16 @@ class TCPSocketServeState {
   final Map<String, SocketConnection> _mapIPToSocketConnection = {};
   bool _isInTimeDelay = false;
   bool _serverIsRunning = false;
-  final _listenerListSocketConnection = StreamController<List<SocketConnection>>();
+  final _listenerListSocketConnection =
+      StreamController<List<SocketConnection>>();
 
   ServerSocket? get serverSocket => _serverSocket;
 
-  Map<String, SocketConnection> get mapIPToSocketConnection => _mapIPToSocketConnection;
+  Map<String, SocketConnection> get mapIPToSocketConnection =>
+      _mapIPToSocketConnection;
 
-  List<SocketConnection> get listSocketConnection => _mapIPToSocketConnection.values.toList();
+  List<SocketConnection> get listSocketConnection =>
+      _mapIPToSocketConnection.values.toList();
 
   bool get isInTimeDelay => _isInTimeDelay;
 
@@ -31,7 +34,8 @@ class TCPSocketServeState {
 
   void setIsInTimeDelay(bool isInTimeDelay) => _isInTimeDelay = isInTimeDelay;
 
-  void setServerIsRunning(bool serverIsRunning) => _serverIsRunning = serverIsRunning;
+  void setServerIsRunning(bool serverIsRunning) =>
+      _serverIsRunning = serverIsRunning;
 
   Future closeSocketConnection(SocketConnection socketConnection) =>
       socketConnection.socketChannel.disconnect();

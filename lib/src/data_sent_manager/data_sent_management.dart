@@ -10,7 +10,8 @@ class DataSentManagement {
 
   get mapVersionToStatusDataSent => _mapVersionToStatusDataSent;
 
-  void addItemToListStatusDataSent(String version, StatusDataSent statusDataSent) {
+  void addItemToListStatusDataSent(
+      String version, StatusDataSent statusDataSent) {
     if (_mapVersionToStatusDataSent.containsKey(version)) {
       _mapVersionToStatusDataSent[version]!.add(statusDataSent);
       Future.delayed(
@@ -28,8 +29,8 @@ class DataSentManagement {
 
   void deleteStatusDataSent(String version, TCPSocketEvent tcpSocketEvent) {
     if (_mapVersionToStatusDataSent[version] != null) {
-      _mapVersionToStatusDataSent[version]!
-          .removeWhere((element) => element.event.totalSplit == tcpSocketEvent.totalSplit);
+      _mapVersionToStatusDataSent[version]!.removeWhere(
+          (element) => element.event.totalSplit == tcpSocketEvent.totalSplit);
       if (_mapVersionToStatusDataSent[version]!.isEmpty) {
         _mapVersionToStatusDataSent.remove(version);
       }
@@ -57,9 +58,11 @@ class DataSentManagement {
 
   void updateWaitingData(TCPSocketEvent tcpSocketEvent) =>
       _mapVersionToWaitingData[tcpSocketEvent.version]!
-          .mapTotalSplitToDataSplit[tcpSocketEvent.totalSplit] = tcpSocketEvent.data;
+              .mapTotalSplitToDataSplit[tcpSocketEvent.totalSplit] =
+          tcpSocketEvent.data;
 
-  void removeWaitingData(String version) => _mapVersionToWaitingData.remove(version);
+  void removeWaitingData(String version) =>
+      _mapVersionToWaitingData.remove(version);
 
   void sendDataError(String version) async {
     while (_mapVersionToStatusDataSent[version] != null) {

@@ -10,10 +10,12 @@ class SocketChannelWeb implements SocketChannel<TCPSocketWeb> {
       throw Exception('TCP Socket not support on web, develop feature later');
 
   @override
-  get socket => throw Exception('TCP Socket not support on web, develop feature later');
+  get socket =>
+      throw Exception('TCP Socket not support on web, develop feature later');
 
   @override
-  int? get sourcePort => throw Exception('TCP Socket not support on web, develop feature later');
+  int? get sourcePort =>
+      throw Exception('TCP Socket not support on web, develop feature later');
 
   @override
   Stream<String> discoverServerIP(String subnet) =>
@@ -30,7 +32,8 @@ class SocketChannelWeb implements SocketChannel<TCPSocketWeb> {
       throw Exception('TCP Socket not support on web, develop feature later');
 
   @override
-  Future disconnect() => throw Exception('TCP Socket not support on web, develop feature later');
+  Future disconnect() =>
+      throw Exception('TCP Socket not support on web, develop feature later');
 
   @override
   void listen(

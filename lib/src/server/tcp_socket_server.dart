@@ -20,7 +20,8 @@ class TCPSocketServer {
   final TCPSocketServeState _state = TCPSocketServeState();
   final DataSentManagement _dataSentManagement = DataSentManagement();
 
-  List<SocketConnection> get listSocketConnection => _state.listSocketConnection;
+  List<SocketConnection> get listSocketConnection =>
+      _state.listSocketConnection;
 
   bool get serverIsRunning => _state.serverIsRunning;
 
@@ -42,7 +43,8 @@ class TCPSocketServer {
   }) async {
     final ip = socket.remoteAddress.address;
     final sourcePort = socket.remotePort;
-    final SocketChannel socketChannel = SocketChannelMobile.getSocketChannelMobile(socket);
+    final SocketChannel socketChannel =
+        SocketChannelMobile.getSocketChannelMobile(socket);
     _state.checkExistAndRemoveSocketConnection(ip);
     _state.addSocketConnection(
       ip,
@@ -107,9 +109,11 @@ class TCPSocketServer {
         version: event.version,
       ).toJsonString(),
     );
-    WaitingData? waitingData = _dataSentManagement.mapVersionToWaitingData[version];
+    WaitingData? waitingData =
+        _dataSentManagement.mapVersionToWaitingData[version];
     if (waitingData!.isReceivedFullData()) {
-      onData(ip, sourcePort, event.copyWith(data: waitingData.getDataAggregated()));
+      onData(ip, sourcePort,
+          event.copyWith(data: waitingData.getDataAggregated()));
       _dataSentManagement.removeWaitingData(version);
     }
   }
@@ -200,7 +204,8 @@ class TCPSocketServer {
       );
       return;
     }
-    final List<String> splitData = HandleDataSending.splitData(formDataSending.data);
+    final List<String> splitData =
+        HandleDataSending.splitData(formDataSending.data);
     final int splitNumber = splitData.length;
     final String version = DateTime.now().microsecondsSinceEpoch.toString();
     for (int i = 0; i < splitData.length; i++) {

@@ -13,7 +13,8 @@ class WaitingData {
     required this.mapTotalSplitToDataSplit,
   });
 
-  bool isReceivedFullData() => mapTotalSplitToDataSplit.keys.length == splitNumber;
+  bool isReceivedFullData() =>
+      mapTotalSplitToDataSplit.keys.length == splitNumber;
 
   String getDataAggregated() => mapTotalSplitToDataSplit.entries
       .sorted((a, b) => a.key.compareTo(b.key))

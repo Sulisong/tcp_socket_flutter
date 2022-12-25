@@ -53,7 +53,8 @@ class TCPSocketClient {
       _dataSentManagement.deleteStatusDataSent(version, event);
       return;
     }
-    WaitingData? waitingData = _dataSentManagement.mapVersionToWaitingData[version];
+    WaitingData? waitingData =
+        _dataSentManagement.mapVersionToWaitingData[version];
     if (waitingData == null) {
       _dataSentManagement.addNewWaitingData(event);
     } else {
@@ -141,7 +142,8 @@ class TCPSocketClient {
       );
       return;
     }
-    final List<String> splitData = HandleDataSending.splitData(formDataSending.data);
+    final List<String> splitData =
+        HandleDataSending.splitData(formDataSending.data);
     final int splitNumber = splitData.length;
     final String version = DateTime.now().microsecondsSinceEpoch.toString();
     for (int i = 0; i < splitData.length; i++) {

@@ -20,7 +20,8 @@ class SocketChannelMobile implements SocketChannel<Socket> {
 
   void setSocket(Socket? socket) => _socket = socket;
 
-  void _setStreamSubscription(StreamSubscription<Uint8List>? streamSubscription) =>
+  void _setStreamSubscription(
+          StreamSubscription<Uint8List>? streamSubscription) =>
       _streamSubscription = streamSubscription;
 
   void _setSourcePort(int sourcePort) => _sourcePort = sourcePort;

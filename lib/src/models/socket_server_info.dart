@@ -25,7 +25,8 @@ class SocketServerInfo extends Equatable {
     serverIsRunning: false,
   );
 
-  factory SocketServerInfo.fromJson(Map<String, dynamic> json) => SocketServerInfo(
+  factory SocketServerInfo.fromJson(Map<String, dynamic> json) =>
+      SocketServerInfo(
         ip: json['ip'] as String,
         deviceServerName: json['nameDevice'] as String,
         serverIsRunning: json['serverIsRunning'] as bool,
