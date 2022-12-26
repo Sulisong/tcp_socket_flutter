@@ -10,7 +10,7 @@ class TCPSocketServeState {
   bool _isInTimeDelay = false;
   bool _serverIsRunning = false;
   final _listenerListSocketConnection =
-      StreamController<List<SocketConnection>>();
+      StreamController<List<SocketConnection>>.broadcast();
 
   ServerSocket? get serverSocket => _serverSocket;
 

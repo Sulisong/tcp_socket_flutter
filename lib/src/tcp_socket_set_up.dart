@@ -12,7 +12,7 @@ class TCPSocketSetUp {
   static SocketConfig _config = const SocketConfig();
   static DeviceInfo _deviceInfo = DeviceInfo.none;
   static final StreamController<DeviceInfo> _streamDeviceInfo =
-      StreamController<DeviceInfo>();
+      StreamController<DeviceInfo>.broadcast();
 
   static void setConfig(SocketConfig config) => _config = config;
 
