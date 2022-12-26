@@ -64,6 +64,18 @@ class TCPSocketServeState {
     print('===================================================');
   }
 
+  void addDeviceInfoToSocketConnection(
+    String ip,
+    DeviceInfo deviceInfo,
+  ) {
+    if (_mapIPToSocketConnection.containsKey(ip)) {
+      _mapIPToSocketConnection[ip] = _mapIPToSocketConnection[ip]!.copyWith(
+        deviceInfo: deviceInfo,
+      );
+      _listenerListSocketConnection.sink.add(listSocketConnection);
+    }
+  }
+
   Future closeServerSocket() async {
     if (_serverSocket != null) {
       _streamSubscriptionServer!.pause();

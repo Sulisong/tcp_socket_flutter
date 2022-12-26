@@ -7,8 +7,6 @@ abstract class SocketChannel<SocketType> {
 
   int? get sourcePort;
 
-  Stream<String> discoverServerIP(String subnet);
-
   Future connect({
     required String ip,
     required int port,

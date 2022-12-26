@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:dart_ipify/dart_ipify.dart';
@@ -10,10 +11,15 @@ import 'models/models.dart';
 class TCPSocketSetUp {
   static SocketConfig _config = const SocketConfig();
   static DeviceInfo _deviceInfo = DeviceInfo.none;
+  static final StreamController<DeviceInfo> _streamDeviceInfo =
+      StreamController<DeviceInfo>();
 
   static void setConfig(SocketConfig config) => _config = config;
 
   static void setDeviceInfo(DeviceInfo deviceInfo) => _deviceInfo = deviceInfo;
+
+  static void _addSinkDeviceInfo(DeviceInfo deviceInfo) =>
+      _streamDeviceInfo.sink.add(deviceInfo);
 
   static SocketConfig get config => _config;
 
@@ -25,6 +31,9 @@ class TCPSocketSetUp {
   static int get numberSplit => config.numberSplit;
 
   static DeviceInfo get deviceInfo => _deviceInfo;
+
+  static Stream<DeviceInfo> get streamDeviceInfoStream =>
+      _streamDeviceInfo.stream;
 
   static String get ip => deviceInfo.ip;
 
@@ -64,6 +73,6 @@ class TCPSocketSetUp {
         deviceName: deviceName,
       ),
     );
-    print(_deviceInfo.toJson());
+    _addSinkDeviceInfo(deviceInfo);
   }
 }

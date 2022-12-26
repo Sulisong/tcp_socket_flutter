@@ -20,8 +20,13 @@ class TCPSocketServer {
   final TCPSocketServeState _state = TCPSocketServeState();
   final DataSentManagement _dataSentManagement = DataSentManagement();
 
+  TCPSocketServeState get state => _state;
+
   List<SocketConnection> get listSocketConnection =>
       _state.listSocketConnection;
+
+  Stream<List<SocketConnection>> get listenerListSocketConnection =>
+      _state.listenerListSocketConnection;
 
   bool get serverIsRunning => _state.serverIsRunning;
 
@@ -95,11 +100,6 @@ class TCPSocketServer {
       _dataSentManagement.deleteStatusDataSent(version, event);
       return;
     }
-    if (_dataSentManagement.mapVersionToWaitingData[version] == null) {
-      _dataSentManagement.addNewWaitingData(event);
-    } else {
-      _dataSentManagement.updateWaitingData(event);
-    }
     socketChannel.write(
       TCPSocketEvent(
         type: TCPSocketDefaultType.$receiveSuccessData,
@@ -111,10 +111,18 @@ class TCPSocketServer {
     );
     WaitingData? waitingData =
         _dataSentManagement.mapVersionToWaitingData[version];
+    if (waitingData != null && waitingData.status) return;
+    if (waitingData == null) {
+      _dataSentManagement.addNewWaitingData(event);
+    } else {
+      _dataSentManagement.updateWaitingData(event);
+    }
+    waitingData = _dataSentManagement.mapVersionToWaitingData[version];
     if (waitingData!.isReceivedFullData()) {
+      _dataSentManagement.replaceWaitingData(
+          version, waitingData.copyWith(status: true));
       onData(ip, sourcePort,
           event.copyWith(data: waitingData.getDataAggregated()));
-      _dataSentManagement.removeWaitingData(version);
     }
   }
 

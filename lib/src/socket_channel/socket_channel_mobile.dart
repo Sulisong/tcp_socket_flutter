@@ -14,6 +14,33 @@ class SocketChannelMobile implements SocketChannel<Socket> {
     return socketChannelMobile;
   }
 
+  static Stream<String> discoverServerIP(String subnet) {
+    final out = StreamController<String>();
+    final futuresSocket = <Future<Socket>>[];
+    final partOfIP =
+        '${subnet.split('.')[0]}.${subnet.split('.')[1]}.${subnet.split('.')[2]}';
+    for (int i = 1; i <= 256; ++i) {
+      final host = '$partOfIP.$i';
+      final Future<Socket> socket = Socket.connect(
+        host,
+        TCPSocketSetUp.port,
+      );
+      futuresSocket.add(socket);
+      socket.then(
+        (s) {
+          s.destroy();
+          out.sink.add(host);
+        },
+      ).catchError(
+        (error) {},
+      );
+    }
+    Future.wait<Socket>(futuresSocket)
+        .then<void>((sockets) => out.close())
+        .catchError((error) => out.close());
+    return out.stream;
+  }
+
   Socket? _socket;
   StreamSubscription<Uint8List>? _streamSubscription;
   int _sourcePort = 0;
@@ -35,35 +62,6 @@ class SocketChannelMobile implements SocketChannel<Socket> {
 
   @override
   int? get sourcePort => _sourcePort;
-
-  @override
-  Stream<String> discoverServerIP(String subnet) {
-    final out = StreamController<String>();
-    final futuresSocket = <Future<Socket>>[];
-    final partOfIP = '${subnet.split('.')[0]}.${subnet.split('.')[1]}';
-    for (int i = 1; i <= 256; ++i) {
-      for (int y = 1; y <= 256; y++) {
-        final host = '$partOfIP.$y.$i';
-        final Future<Socket> socket = Socket.connect(
-          host,
-          TCPSocketSetUp.port,
-        );
-        futuresSocket.add(socket);
-        socket.then(
-          (s) {
-            s.destroy();
-            out.sink.add(host);
-          },
-        ).catchError(
-          (error) {},
-        );
-      }
-    }
-    Future.wait<Socket>(futuresSocket)
-        .then<void>((sockets) => out.close())
-        .catchError((error) => out.close());
-    return out.stream;
-  }
 
   @override
   Future connect({

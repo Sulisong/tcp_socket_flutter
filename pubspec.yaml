@@ -1,6 +1,6 @@
 name: tcp_socket_flutter
 description: TCP Socket for Flutter.
-version: 0.0.1
+version: 0.0.2
 homepage: https://github.com/nghetien/tcp_socket_flutter
 
 environment:

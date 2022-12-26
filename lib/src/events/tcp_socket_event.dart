@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:equatable/equatable.dart';
 
+import 'events.dart';
+
 class TCPSocketEvent extends Equatable {
   final String type;
   final String data;
@@ -35,8 +37,25 @@ class TCPSocketEvent extends Equatable {
 
   String toJsonString() => jsonEncode(toJson());
 
-  factory TCPSocketEvent.fromJsonString(String json) =>
-      TCPSocketEvent.fromJson(jsonDecode(json) as Map<String, dynamic>);
+  factory TCPSocketEvent.fromJsonString(String json) {
+    {
+      try {
+        return TCPSocketEvent.fromJson(
+            jsonDecode(json) as Map<String, dynamic>);
+      } catch (e) {
+        print('-----------------------------------------');
+        print('TCPSocketEvent.fromJsonString: $e');
+        print('-----------------------------------------');
+        return const TCPSocketEvent(
+          type: TCPSocketDefaultType.$errorSending,
+          data: '',
+          splitNumber: 1,
+          totalSplit: 1,
+          version: '',
+        );
+      }
+    }
+  }
 
   TCPSocketEvent copyWith({
     String? type,

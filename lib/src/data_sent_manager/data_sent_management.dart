@@ -61,6 +61,9 @@ class DataSentManagement {
               .mapTotalSplitToDataSplit[tcpSocketEvent.totalSplit] =
           tcpSocketEvent.data;
 
+  void replaceWaitingData(String version, WaitingData waitingData) =>
+      _mapVersionToWaitingData[version] = waitingData;
+
   void removeWaitingData(String version) =>
       _mapVersionToWaitingData.remove(version);
 
@@ -80,6 +83,12 @@ class DataSentManagement {
           continue;
         }
         statusDataSent.socketChannel.write(statusDataSent.event.toJsonString());
+        final indexOf =
+            _mapVersionToStatusDataSent[version]!.indexOf(statusDataSent);
+        _mapVersionToStatusDataSent[version]![indexOf] =
+            statusDataSent.copyWith(
+          timesToDelete: statusDataSent.timesToDelete + 1,
+        );
         await Future.delayed(TCPSocketSetUp.timeoutEachTimesSendData);
       }
       for (var remover in needToRemove) {

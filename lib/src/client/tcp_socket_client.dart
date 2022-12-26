@@ -53,13 +53,6 @@ class TCPSocketClient {
       _dataSentManagement.deleteStatusDataSent(version, event);
       return;
     }
-    WaitingData? waitingData =
-        _dataSentManagement.mapVersionToWaitingData[version];
-    if (waitingData == null) {
-      _dataSentManagement.addNewWaitingData(event);
-    } else {
-      _dataSentManagement.updateWaitingData(event);
-    }
     socketChannel.write(
       TCPSocketEvent(
         type: TCPSocketDefaultType.$receiveSuccessData,
@@ -69,9 +62,19 @@ class TCPSocketClient {
         version: event.version,
       ).toJsonString(),
     );
+    WaitingData? waitingData =
+        _dataSentManagement.mapVersionToWaitingData[version];
+    if (waitingData != null && waitingData.status) return;
+    if (waitingData == null) {
+      _dataSentManagement.addNewWaitingData(event);
+    } else {
+      _dataSentManagement.updateWaitingData(event);
+    }
+    waitingData = _dataSentManagement.mapVersionToWaitingData[version];
     if (waitingData!.isReceivedFullData()) {
+      _dataSentManagement.replaceWaitingData(
+          version, waitingData.copyWith(status: true));
       onData(event.copyWith(data: waitingData.getDataAggregated()));
-      _dataSentManagement.removeWaitingData(version);
     }
   }
 
@@ -87,6 +90,14 @@ class TCPSocketClient {
   }
 
   /// API Logic
+  Stream<String> discoverServerIP(String subnet) {
+    if (kIsWeb) {
+      throw Exception('Not support web');
+    } else {
+      return SocketChannelMobile.discoverServerIP(subnet);
+    }
+  }
+
   Future<bool> connectToServer(
     String connectIP, {
     required ValueChanged<TCPSocketEvent> onData,
