@@ -81,9 +81,9 @@ class TCPSocketClient {
   void _onHandleDone({
     required VoidCallback onDone,
   }) async {
-    print('===================================================');
-    print('Client logs: server is disconnected');
-    print('===================================================');
+    debugPrint('------------------------------------------------------------');
+    debugPrint('Client logs: server is disconnected');
+    debugPrint('------------------------------------------------------------');
     await _state.closeSocketChannel();
     _setTimeDelay();
     onDone();

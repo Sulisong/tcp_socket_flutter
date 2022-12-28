@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 
 import 'events.dart';
 
@@ -43,9 +44,9 @@ class TCPSocketEvent extends Equatable {
         return TCPSocketEvent.fromJson(
             jsonDecode(json) as Map<String, dynamic>);
       } catch (e) {
-        print('-----------------------------------------');
-        print('TCPSocketEvent.fromJsonString: $e');
-        print('-----------------------------------------');
+        debugPrint('------------------------------------------------------------');
+        debugPrint('TCPSocketEvent.fromJsonString: $e');
+        debugPrint('------------------------------------------------------------');
         return const TCPSocketEvent(
           type: TCPSocketDefaultType.$errorSending,
           data: '',

@@ -11,6 +11,7 @@ class SocketChannelMobile implements SocketChannel<Socket> {
   static SocketChannelMobile getSocketChannelMobile(Socket socket) {
     final socketChannelMobile = SocketChannelMobile();
     socketChannelMobile.setSocket(socket);
+    socketChannelMobile.setSourcePort(socket.remotePort);
     return socketChannelMobile;
   }
 
@@ -51,7 +52,7 @@ class SocketChannelMobile implements SocketChannel<Socket> {
           StreamSubscription<Uint8List>? streamSubscription) =>
       _streamSubscription = streamSubscription;
 
-  void _setSourcePort(int sourcePort) => _sourcePort = sourcePort;
+  void setSourcePort(int sourcePort) => _sourcePort = sourcePort;
 
   @override
   String get infoConnection =>
@@ -71,7 +72,7 @@ class SocketChannelMobile implements SocketChannel<Socket> {
     sourceAddress,
     Duration? timeout,
   }) async {
-    _setSourcePort(sourcePort);
+    setSourcePort(sourcePort);
     setSocket(
       await Socket.connect(
         ip,
@@ -85,15 +86,21 @@ class SocketChannelMobile implements SocketChannel<Socket> {
 
   @override
   Future disconnect() async {
-    if (_streamSubscription != null) {
-      _streamSubscription!.pause();
-      await _streamSubscription!.cancel();
-      _setStreamSubscription(null);
-    }
-    if (_socket != null) {
-      _socket!.destroy();
-      await _socket!.close();
-      setSocket(null);
+    try {
+      if (_streamSubscription != null) {
+        _streamSubscription!.pause();
+        await _streamSubscription!.cancel();
+        _setStreamSubscription(null);
+      }
+      if (_socket != null) {
+        _socket!.destroy();
+        await _socket!.close();
+        setSocket(null);
+      }
+    } catch (e) {
+      debugPrint('------------------------------------------------------------');
+      debugPrint('SocketChannelMobile disconnect error: $e');
+      debugPrint('------------------------------------------------------------');
     }
   }
 

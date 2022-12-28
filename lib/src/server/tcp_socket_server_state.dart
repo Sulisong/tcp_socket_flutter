@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/material.dart';
+
 import '../models/models.dart';
 
 class TCPSocketServeState {
@@ -34,34 +36,30 @@ class TCPSocketServeState {
 
   void setIsInTimeDelay(bool isInTimeDelay) => _isInTimeDelay = isInTimeDelay;
 
-  void setServerIsRunning(bool serverIsRunning) =>
-      _serverIsRunning = serverIsRunning;
+  void setServerIsRunning(bool serverIsRunning) => _serverIsRunning = serverIsRunning;
 
   Future closeSocketConnection(SocketConnection socketConnection) =>
       socketConnection.socketChannel.disconnect();
 
-  void removeSocketConnection(SocketConnection socketConnection) {
-    _mapIPToSocketConnection.removeWhere(
-      (key, value) => key == socketConnection.deviceInfo.ip,
-    );
+  void removeSocketConnection(String ip) {
+    _mapIPToSocketConnection.remove(ip);
     _listenerListSocketConnection.sink.add(listSocketConnection);
   }
 
   Future checkExistAndRemoveSocketConnection(String ip) async {
     if (_mapIPToSocketConnection.containsKey(ip)) {
-      final socketConnection = _mapIPToSocketConnection[ip]!;
-      await closeSocketConnection(socketConnection);
-      removeSocketConnection(socketConnection);
+      await closeSocketConnection(_mapIPToSocketConnection[ip]!);
+      removeSocketConnection(ip);
     }
   }
 
   void addSocketConnection(ip, SocketConnection socketConnection) {
     _mapIPToSocketConnection[ip] = socketConnection;
     _listenerListSocketConnection.sink.add(listSocketConnection);
-    print('===================================================');
-    print('Server logs - New connection from:');
-    print(socketConnection.deviceInfo.toJson());
-    print('===================================================');
+    debugPrint('------------------------------------------------------------');
+    debugPrint('Server logs - New connection from:');
+    debugPrint(socketConnection.deviceInfo.toJsonString());
+    debugPrint('------------------------------------------------------------');
   }
 
   void addDeviceInfoToSocketConnection(

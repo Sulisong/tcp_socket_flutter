@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:flutter/material.dart';
+
 import '../data_sent_manager/data_sent_management.dart';
 import '../events/events.dart';
 import '../helpers/helpers.dart';
@@ -50,7 +52,7 @@ class TCPSocketServer {
     final sourcePort = socket.remotePort;
     final SocketChannel socketChannel =
         SocketChannelMobile.getSocketChannelMobile(socket);
-    _state.checkExistAndRemoveSocketConnection(ip);
+    await _state.checkExistAndRemoveSocketConnection(ip);
     _state.addSocketConnection(
       ip,
       SocketConnection(
@@ -131,11 +133,34 @@ class TCPSocketServer {
     int? sourcePort,
     required Function(String ip, int? sourcePort) onDone,
   }) async {
-    print('===================================================');
-    print('Server logs - $ip:$sourcePort - disconnected');
-    print('===================================================');
     await _state.checkExistAndRemoveSocketConnection(ip);
+    debugPrint('------------------------------------------------------------');
+    debugPrint('Server logs - $ip:$sourcePort - disconnected');
+    debugPrint('------------------------------------------------------------');
     onDone(ip, sourcePort);
+  }
+
+  Future _closeServer() async {
+    await _state.closeAllSocketConnection();
+    await _state.closeServerSocket();
+    _state.setServerIsRunning(false);
+    _setTimeDelay();
+  }
+
+  void _onHandeServerDone({VoidCallback? onServerDone}) async {
+    await _closeServer();
+    debugPrint('------------------------------------------------------------');
+    debugPrint('Server logs: Stopped');
+    debugPrint('------------------------------------------------------------');
+    if (onServerDone != null) onServerDone();
+  }
+
+  void _onHandeServerError(dynamic error, {ValueChanged<dynamic>? onServerError}) async {
+    await _closeServer();
+    debugPrint('------------------------------------------------------------');
+    debugPrint('Server logs error: $error');
+    debugPrint('------------------------------------------------------------');
+    if (onServerError != null) onServerError(error);
   }
 
   /// API Logic
@@ -143,6 +168,8 @@ class TCPSocketServer {
     required Function(String ip, int? sourcePort, TCPSocketEvent event) onData,
     required Function(String ip, int? sourcePort) onDone,
     required Function(dynamic error, String ip, int? sourcePort) onError,
+    VoidCallback? onServerDone,
+    ValueChanged<dynamic>? onServerError,
   }) async {
     if (_state.serverIsRunning) {
       throw Exception('Server is running');
@@ -164,12 +191,14 @@ class TCPSocketServer {
           );
           _state.setStreamSubscriptionServer(
             _state.serverSocket!.listen(
-              (socket) => _onRequest(
+                  (socket) => _onRequest(
                 socket,
                 onData: onData,
                 onDone: onDone,
                 onError: onError,
               ),
+              onDone: () => _onHandeServerDone(onServerDone: onServerDone),
+              onError: (error) => _onHandeServerError(error, onServerError: onServerError),
             ),
           );
           _state.setServerIsRunning(true);
@@ -190,10 +219,7 @@ class TCPSocketServer {
     if (_state.isInTimeDelay) {
       throw Exception('Please wait for a while before starting again');
     }
-    await _state.closeAllSocketConnection();
-    await _state.closeServerSocket();
-    _state.setServerIsRunning(false);
-    _setTimeDelay();
+    await _closeServer();
   }
 
   Future _send(
@@ -242,10 +268,12 @@ class TCPSocketServer {
 
   Future sendData(
     FormDataSending formDataSending, {
-    SocketChannel? targetSocketChannel,
+    List<SocketChannel> targetSocketChannels = const [],
   }) async {
-    if (targetSocketChannel != null) {
-      await _send(formDataSending, targetSocketChannel);
+    if (targetSocketChannels.isNotEmpty) {
+      for (final socketChannel in targetSocketChannels) {
+        await _send(formDataSending, socketChannel);
+      }
       return;
     }
     for (final socketConnection in listSocketConnection) {
