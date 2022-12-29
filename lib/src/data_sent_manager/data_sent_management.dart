@@ -82,7 +82,8 @@ class DataSentManagement {
           needToRemove.add(statusDataSent);
           continue;
         }
-        statusDataSent.socketChannel.write(statusDataSent.event.toJsonString());
+        statusDataSent.socketChannel
+            .writeUTF8(statusDataSent.event.toJsonString());
         final indexOf =
             _mapVersionToStatusDataSent[version]!.indexOf(statusDataSent);
         _mapVersionToStatusDataSent[version]![indexOf] =

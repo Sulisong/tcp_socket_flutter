@@ -36,7 +36,8 @@ class TCPSocketServeState {
 
   void setIsInTimeDelay(bool isInTimeDelay) => _isInTimeDelay = isInTimeDelay;
 
-  void setServerIsRunning(bool serverIsRunning) => _serverIsRunning = serverIsRunning;
+  void setServerIsRunning(bool serverIsRunning) =>
+      _serverIsRunning = serverIsRunning;
 
   Future closeSocketConnection(SocketConnection socketConnection) =>
       socketConnection.socketChannel.disconnect();

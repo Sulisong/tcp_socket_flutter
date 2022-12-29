@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -93,7 +94,7 @@ class TCPSocketServer {
     required SocketChannel socketChannel,
     required Function(String ip, int? sourcePort, TCPSocketEvent event) onData,
   }) {
-    final stringData = String.fromCharCodes(data);
+    final stringData = utf8.decode(data);
     final TCPSocketEvent event = TCPSocketEvent.fromJsonString(stringData);
     final String version = event.version;
     final String type = event.type;
@@ -102,7 +103,7 @@ class TCPSocketServer {
       _dataSentManagement.deleteStatusDataSent(version, event);
       return;
     }
-    socketChannel.write(
+    socketChannel.writeUTF8(
       TCPSocketEvent(
         type: TCPSocketDefaultType.$receiveSuccessData,
         data: '',
@@ -155,7 +156,8 @@ class TCPSocketServer {
     if (onServerDone != null) onServerDone();
   }
 
-  void _onHandeServerError(dynamic error, {ValueChanged<dynamic>? onServerError}) async {
+  void _onHandeServerError(dynamic error,
+      {ValueChanged<dynamic>? onServerError}) async {
     await _closeServer();
     debugPrint('------------------------------------------------------------');
     debugPrint('Server logs error: $error');
@@ -191,14 +193,15 @@ class TCPSocketServer {
           );
           _state.setStreamSubscriptionServer(
             _state.serverSocket!.listen(
-                  (socket) => _onRequest(
+              (socket) => _onRequest(
                 socket,
                 onData: onData,
                 onDone: onDone,
                 onError: onError,
               ),
               onDone: () => _onHandeServerDone(onServerDone: onServerDone),
-              onError: (error) => _onHandeServerError(error, onServerError: onServerError),
+              onError: (error) =>
+                  _onHandeServerError(error, onServerError: onServerError),
             ),
           );
           _state.setServerIsRunning(true);
@@ -227,7 +230,7 @@ class TCPSocketServer {
     SocketChannel socketChannel,
   ) async {
     if (formDataSending.data.isEmpty) {
-      socketChannel.write(
+      socketChannel.writeUTF8(
         TCPSocketEvent(
           type: formDataSending.type,
           data: formDataSending.data,
@@ -259,7 +262,7 @@ class TCPSocketServer {
           timesToDelete: 0,
         ),
       );
-      socketChannel.write(subEvent.toJsonString());
+      socketChannel.writeUTF8(subEvent.toJsonString());
       await Future.delayed(TCPSocketSetUp.timeoutEachTimesSendData);
     }
     await Future.delayed(TCPSocketSetUp.timeoutEachTimesSendData);

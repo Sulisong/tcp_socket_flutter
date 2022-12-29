@@ -44,9 +44,11 @@ class TCPSocketEvent extends Equatable {
         return TCPSocketEvent.fromJson(
             jsonDecode(json) as Map<String, dynamic>);
       } catch (e) {
-        debugPrint('------------------------------------------------------------');
+        debugPrint(
+            '------------------------------------------------------------');
         debugPrint('TCPSocketEvent.fromJsonString: $e');
-        debugPrint('------------------------------------------------------------');
+        debugPrint(
+            '------------------------------------------------------------');
         return const TCPSocketEvent(
           type: TCPSocketDefaultType.$errorSending,
           data: '',

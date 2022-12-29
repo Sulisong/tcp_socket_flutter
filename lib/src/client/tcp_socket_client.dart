@@ -1,6 +1,6 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math';
-import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
@@ -43,7 +43,7 @@ class TCPSocketClient {
     if (kIsWeb) {
       throw Exception('Not support web');
     } else {
-      stringData = String.fromCharCodes(data as Uint8List);
+      stringData = utf8.decode(data);
     }
     final TCPSocketEvent event = TCPSocketEvent.fromJsonString(stringData);
     final String version = event.version;
@@ -53,7 +53,7 @@ class TCPSocketClient {
       _dataSentManagement.deleteStatusDataSent(version, event);
       return;
     }
-    socketChannel.write(
+    socketChannel.writeUTF8(
       TCPSocketEvent(
         type: TCPSocketDefaultType.$receiveSuccessData,
         data: '',
@@ -142,7 +142,7 @@ class TCPSocketClient {
 
   Future _send(FormDataSending formDataSending) async {
     if (formDataSending.data.isEmpty) {
-      socketChannel.write(
+      socketChannel.writeUTF8(
         TCPSocketEvent(
           type: formDataSending.type,
           data: formDataSending.data,
@@ -174,7 +174,7 @@ class TCPSocketClient {
           timesToDelete: 0,
         ),
       );
-      socketChannel!.write(event.toJsonString());
+      socketChannel!.writeUTF8(event.toJsonString());
       await Future.delayed(TCPSocketSetUp.timeoutEachTimesSendData);
     }
     await Future.delayed(TCPSocketSetUp.timeoutEachTimesSendData);

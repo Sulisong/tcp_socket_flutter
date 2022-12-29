@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -82,6 +83,7 @@ class SocketChannelMobile implements SocketChannel<Socket> {
         sourceAddress: sourceAddress,
       ),
     );
+    _socket!.encoding = Encoding.getByName('utf-8')!;
   }
 
   @override
@@ -98,9 +100,11 @@ class SocketChannelMobile implements SocketChannel<Socket> {
         setSocket(null);
       }
     } catch (e) {
-      debugPrint('------------------------------------------------------------');
+      debugPrint(
+          '------------------------------------------------------------');
       debugPrint('SocketChannelMobile disconnect error: $e');
-      debugPrint('------------------------------------------------------------');
+      debugPrint(
+          '------------------------------------------------------------');
     }
   }
 
@@ -124,7 +128,7 @@ class SocketChannelMobile implements SocketChannel<Socket> {
   void write(String data) => _socket!.write(data);
 
   @override
-  void add(List<int> data) => _socket!.add(data);
+  void writeUTF8(String data) => _socket!.add(utf8.encode(data));
 
   @override
   Future addList(Stream<List<int>> stream) => _socket!.addStream(stream);

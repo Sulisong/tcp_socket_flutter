@@ -26,7 +26,7 @@ abstract class SocketChannel<SocketType> {
 
   void write(String data);
 
-  void add(List<int> data);
+  void writeUTF8(String data);
 
   Future addList(Stream<List<int>> stream);
 }

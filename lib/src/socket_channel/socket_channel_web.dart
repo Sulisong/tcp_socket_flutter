@@ -45,7 +45,7 @@ class SocketChannelWeb implements SocketChannel<TCPSocketWeb> {
       throw Exception('TCP Socket not support on web, develop feature later');
 
   @override
-  void add(List<int> data) =>
+  void writeUTF8(String data) =>
       throw Exception('TCP Socket not support on web, develop feature later');
 
   @override
