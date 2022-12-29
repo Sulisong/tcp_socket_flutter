@@ -1,3 +1,7 @@
+## 0.0.4
+
+* Fix bug don't remove SocketConnection when id of new connecting is same as id into map of server(await checkExistAndRemoveSocketConnection)
+
 ## 0.0.3
 
 * Move streamDeviceInfo, listenerListSocketConnection to broadcast().
