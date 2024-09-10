@@ -43,13 +43,13 @@ class TCPSocketSetUp {
 
   static String get deviceName => deviceInfo.deviceName;
 
-  static Future init() async {
-    String wifiIP = '';
-    if (kIsWeb) {
-      wifiIP = await Ipify.ipv4();
-    } else {
-      wifiIP = await NetworkInfo().getWifiIP() ?? '';
-    }
+  static Future init(String ip) async {
+    String wifiIP = ip;
+    // if (kIsWeb) {
+    //   wifiIP = await Ipify.ipv4();
+    // } else {
+    //   wifiIP = await NetworkInfo().getWifiIP() ?? '';
+    // }
     String wifiSubnet = '';
     String deviceName = '';
     if (wifiIP.isEmpty) throw Exception('Get IP address failed');
